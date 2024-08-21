@@ -104,8 +104,8 @@ Windows Registry Editor Version 5.00
 
     foreach ($hid in $hids) {
         $registryCode += @"
-; Keyboard layout override for $hid
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\$hid\Device Parameters]
+; Keyboard layout override for $($hid.InstanceId)
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\$($hid.InstanceId)\Device Parameters]
 "KeyboardSubtypeOverride"=dword:$keyboardSubtypeOverride
 "KeyboardTypeOverride"=dword:$keyboardTypeOverride
 
