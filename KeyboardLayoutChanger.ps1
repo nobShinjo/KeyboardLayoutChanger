@@ -67,7 +67,7 @@ function New-RegistryModificationCode {
 # Main script
 # Disconnect all keyboards except the one with the default layout
 Write-Output "Please, disconnect all keyboards except the one with the default layout."
-Write-Host "Are you ready to proceed? (Y/N)"
+$result = Read-Host "Are you ready to proceed? (Y/N)"
 if ($result -ne "Y") {
     Write-Output "Operation canceled. Exiting."
     exit
