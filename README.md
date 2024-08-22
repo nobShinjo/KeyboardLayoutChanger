@@ -6,9 +6,9 @@
 
 KeyboardLayoutChanger is a PowerShell script that automatically generates registry files to switch between US and JIS keyboard layouts on a per-keyboard basis on Windows machines.
 
-## CHANGELOG
+## Release Notes
 
-[CHANGELOG](CHANGELOLG.md)
+[CHANGELOG](CHANGELOG.md)
 
 ## Features
 
