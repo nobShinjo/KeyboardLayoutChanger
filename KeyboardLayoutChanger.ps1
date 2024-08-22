@@ -88,10 +88,6 @@ else {
     exit 1
 }
 
-# Prompt user for desired keyboard layout
-$layout = Read-Host "Enter the desired keyboard layout for existing keyboards (JIS/US):"
-$layoutValues = Get-KeyboardLayoutValues -layout $layout
-
 # Generate registry modification code
 $registryCode = @"
 Windows Registry Editor Version 5.00
@@ -109,10 +105,16 @@ $registryCode += @"
 "OverrideKeyboardSubtype"=-
 "OverrideKeyboardType"=-
 
+
 "@
 
+
+# Prompt user for desired keyboard layout
+$layout = Read-Host "Enter the desired keyboard layout for existing keyboards (JIS/US):"
+
 # Prompt for keyboard layout for each existing keyboard
-$registryCode += "; Device parameters for exitsing keyboard layout override (JIS/US)`n"
+$layoutValues = Get-KeyboardLayoutValues -layout $layout
+$registryCode += "; Device parameters for exitsing keyboard layout override ($($layout))`n"
 foreach ($keyboard in $existingKeyboards) {
     $registryCode += New-RegistryModificationCode -name $keyboard.Name -hid $keyboard.InstanceId -layoutValues $layoutValues
 }
@@ -140,13 +142,7 @@ while ($true) {
 
 # Prompt user for desired keyboard layout
 $layout = Read-Host "Enter the desired keyboard layout (JIS/US):"
-
-$registryCode += @"
-; Device parameters for new keyboard layout override (JIS/US)
-
-"@
-
-$registryCode += "; Device parameters for new keyboard layout override (JIS/US)`n"
+$registryCode += "; Device parameters for new keyboard layout override ($($layout))`n"
 foreach ($keyboard in $newKeyboards) {
     $newlayoutValues = Get-KeyboardLayoutValues -layout $layout
     $registryCode += New-RegistryModificationCode -name $keyboard.Name -hid $keyboard.InstanceId -layoutValues $newlayoutValues
