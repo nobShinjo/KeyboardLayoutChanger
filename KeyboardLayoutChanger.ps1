@@ -75,7 +75,6 @@ if ($result -ne "Y") {
     
 # Get all currently connected keyboard devices
 Write-Output "Getting initial list of connected keyboards..."
-Start-Sleep -Seconds 10
 $existingKeyboards = Get-KeyboardDevices
     
 # Display currently connected keyboards
