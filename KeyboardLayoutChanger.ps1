@@ -1,7 +1,7 @@
 # Description: PowerShell script to change the keyboard layout for connected keyboards on Windows operating systems.
 # Author: Nob Shinjo
-# Date: 2021-09-29
-# Version: 1.1.0
+# Date: 2024-08-22
+# Version: 1.0.0
 # Usage: Run the script in a PowerShell environment and follow the prompts to change the keyboard layout.
 # Note: This script is designed for Windows operating systems.
 
