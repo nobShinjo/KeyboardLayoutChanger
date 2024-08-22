@@ -6,7 +6,7 @@ KeyboardLayoutChangerは、Windowsマシン上でキーボードごとにUS/JIS�
 
 ## 変更履歴
 
-[CHANGELOG](CHANGELOLG.md)
+[CHANGELOG](CHANGELOG.md)
 
 ## 機能
 

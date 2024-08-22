@@ -8,7 +8,7 @@ KeyboardLayoutChanger is a PowerShell script that automatically generates regist
 
 ## Release Notes
 
-[CHANGELOG](CHANGELOLG.md)
+[CHANGELOG](CHANGELOG.md)
 
 ## Features
 
