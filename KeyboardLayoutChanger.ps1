@@ -60,6 +60,7 @@ function New-RegistryModificationCode {
 "KeyboardSubtypeOverride"=dword:$($layoutValues.KeyboardSubtypeOverride)
 "KeyboardTypeOverride"=dword:$($layoutValues.KeyboardTypeOverride)
 
+
 "@
 }
 
@@ -97,6 +98,7 @@ Windows Registry Editor Version 5.00
 
 ; Automatically generated registry changes for keyboard layout
 
+
 "@
 
 # Add registry changes for i8042prt parameters
@@ -110,8 +112,8 @@ $registryCode += @"
 "@
 
 # Prompt for keyboard layout for each existing keyboard
+$registryCode += "; Device parameters for exitsing keyboard layout override (JIS/US)`n"
 foreach ($keyboard in $existingKeyboards) {
-    $registryCode += "; Device parameters for exitsing keyboard layout override (JIS/US) for $($keyboard.Name)`n"
     $registryCode += New-RegistryModificationCode -name $keyboard.Name -hid $keyboard.InstanceId -layoutValues $layoutValues
 }
 
@@ -144,14 +146,14 @@ $registryCode += @"
 
 "@
 
+$registryCode += "; Device parameters for new keyboard layout override (JIS/US)`n"
 foreach ($keyboard in $newKeyboards) {
     $newlayoutValues = Get-KeyboardLayoutValues -layout $layout
-    $registryCode += "; Device parameters for new keyboard layout override (JIS/US) for $($keyboard.Name)`n"
     $registryCode += New-RegistryModificationCode -name $keyboard.Name -hid $keyboard.InstanceId -layoutValues $newlayoutValues
 }
 
 # Output the registry modification code to a .reg file in the current directory
 $registryFilePath = Join-Path -Path (Get-Location) -ChildPath "keyboard_layout_change.reg"
-$registryCode | Out-File -FilePath $registryFilePath -Encoding ASCII
+$registryCode | Out-File -FilePath $registryFilePath -Encoding utf8
 
 Write-Output "Registry modification code has been saved to $registryFilePath"
