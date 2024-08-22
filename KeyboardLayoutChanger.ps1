@@ -60,6 +60,7 @@ function New-RegistryModificationCode {
 "KeyboardSubtypeOverride"=dword:$($layoutValues.KeyboardSubtypeOverride)
 "KeyboardTypeOverride"=dword:$($layoutValues.KeyboardTypeOverride)
 
+
 "@
 }
 
@@ -67,7 +68,7 @@ function New-RegistryModificationCode {
 # Main script
 # Disconnect all keyboards except the one with the default layout
 Write-Output "Please, disconnect all keyboards except the one with the default layout."
-Write-Host "Are you ready to proceed? (Y/N)"
+$result = Read-Host "Are you ready to proceed? (Y/N)"
 if ($result -ne "Y") {
     Write-Output "Operation canceled. Exiting."
     exit
@@ -75,7 +76,6 @@ if ($result -ne "Y") {
     
 # Get all currently connected keyboard devices
 Write-Output "Getting initial list of connected keyboards..."
-Start-Sleep -Seconds 10
 $existingKeyboards = Get-KeyboardDevices
     
 # Display currently connected keyboards
@@ -88,15 +88,12 @@ else {
     exit 1
 }
 
-# Prompt user for desired keyboard layout
-$layout = Read-Host "Enter the desired keyboard layout for existing keyboards (JIS/US):"
-$layoutValues = Get-KeyboardLayoutValues -layout $layout
-
 # Generate registry modification code
 $registryCode = @"
 Windows Registry Editor Version 5.00
 
 ; Automatically generated registry changes for keyboard layout
+
 
 "@
 
@@ -108,11 +105,17 @@ $registryCode += @"
 "OverrideKeyboardSubtype"=-
 "OverrideKeyboardType"=-
 
+
 "@
 
+
+# Prompt user for desired keyboard layout
+$layout = Read-Host "Enter the desired keyboard layout for existing keyboards (JIS/US):"
+
 # Prompt for keyboard layout for each existing keyboard
+$layoutValues = Get-KeyboardLayoutValues -layout $layout
+$registryCode += "; Device parameters for exitsing keyboard layout override ($($layout))`n"
 foreach ($keyboard in $existingKeyboards) {
-    $registryCode += "; Device parameters for exitsing keyboard layout override (JIS/US) for $($keyboard.Name)`n"
     $registryCode += New-RegistryModificationCode -name $keyboard.Name -hid $keyboard.InstanceId -layoutValues $layoutValues
 }
 
@@ -139,20 +142,14 @@ while ($true) {
 
 # Prompt user for desired keyboard layout
 $layout = Read-Host "Enter the desired keyboard layout (JIS/US):"
-
-$registryCode += @"
-; Device parameters for new keyboard layout override (JIS/US)
-
-"@
-
+$registryCode += "; Device parameters for new keyboard layout override ($($layout))`n"
 foreach ($keyboard in $newKeyboards) {
     $newlayoutValues = Get-KeyboardLayoutValues -layout $layout
-    $registryCode += "; Device parameters for new keyboard layout override (JIS/US) for $($keyboard.Name)`n"
     $registryCode += New-RegistryModificationCode -name $keyboard.Name -hid $keyboard.InstanceId -layoutValues $newlayoutValues
 }
 
 # Output the registry modification code to a .reg file in the current directory
 $registryFilePath = Join-Path -Path (Get-Location) -ChildPath "keyboard_layout_change.reg"
-$registryCode | Out-File -FilePath $registryFilePath -Encoding ASCII
+$registryCode | Out-File -FilePath $registryFilePath -Encoding utf8
 
 Write-Output "Registry modification code has been saved to $registryFilePath"
