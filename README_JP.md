@@ -11,17 +11,37 @@ KeyboardLayoutChangerは、Windowsマシン上でキーボードごとにUS/JIS�
 ## 機能
 
 - キーボードレイアウトの共通Override設定を削除します。
+- `LayerDriver JPN`を`kbd101.dll`に設定します。
 - キーボードレイアウトの共通設定をPCAT_101KEYへ変更します。
 
     ```reg
     [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\i8042prt\Parameters]
+    "LayerDriver JPN"="kbd101.dll"
+    "LayerDriver KOR"="kbd101a.dll"
     "OverrideKeyboardIdentifier"="PCAT_101KEY"
     "OverrideKeyboardSubtype"=-
     "OverrideKeyboardType"=-
     ```
 
+  - 接続されたキーボードの標準 PS/2 キーボードなどのACPIデバイスの Device ParameterへJIS配列、またはUS配列のOverride設定を追加します。
+  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\ACPI\以下を変更する。
+
+  - JIS配列
+
+    ```reg
+    "OverrideKeyboardSubtype"=dword:00000002
+    "OverrideKeyboardType"=dword:00000007
+    ```
+
+  - US配列
+
+    ```reg
+    "OverrideKeyboardSubtype"=dword:00000000
+    "OverrideKeyboardType"=dword:00000007
+    ```
+
 - 接続されたキーボードのHID/Device ParameterへJIS配列、またはUS配列のOverride設定を追加します。
-  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\HID\以下を変更する
+  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\HID\以下を変更する。
 
   - JIS配列
 
