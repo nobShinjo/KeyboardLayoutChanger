@@ -13,13 +13,35 @@ KeyboardLayoutChanger is a PowerShell script that automatically generates regist
 ## Features
 
 - Removes common override settings for keyboard layouts.
+- Set `LayerDriver JPN` to `kbd101.dll`.
 - Changes the common keyboard layout setting to PCAT_101KEY.
 
     ```reg
     [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\i8042prt\Parameters]
+    "LayerDriver JPN"="kbd101.dll"
+    "LayerDriver KOR"="kbd101a.dll"
     "OverrideKeyboardIdentifier"="PCAT_101KEY"
     "OverrideKeyboardSubtype"=-
     "OverrideKeyboardType"=-
+    ```
+
+  - Adds override settings for JIS or US layouts to the Device Parameter of the ACPI device of connected keyboards, such as a standard PS/2 keyboard.
+  Modifies the registry under HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\ACPI\.
+
+  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\ACPI\以下を変更する。
+
+  - JIS配列
+
+    ```reg
+    "OverrideKeyboardSubtype"=dword:00000002
+    "OverrideKeyboardType"=dword:00000007
+    ```
+
+  - US配列
+
+    ```reg
+    "OverrideKeyboardSubtype"=dword:00000000
+    "OverrideKeyboardType"=dword:00000007
     ```
 
 - Adds override settings for JIS or US layouts to the HID/Device Parameters of connected keyboards.

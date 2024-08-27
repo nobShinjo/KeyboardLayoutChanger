@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
+## [1.0.1] - 2024-08-28
+
+### Fixed
+
+- Corrected the registry key names for ACPI and non-ACPI devices in the `New-RegistryModificationCode` function. (1a4f83c6dccbcd2d6e9bf9607b1676f7ff8d63b2)
+  - For ACPI devices, the registry keys are now `"OverrideKeyboardSubtype"` and `"OverrideKeyboardType"`.
+  - For non-ACPI devices, the registry keys are now `"KeyboardSubtypeOverride"` and `"KeyboardTypeOverride"`.
+- Added registry settings for `i8042prt` parameters to override keyboard layout for US. (1a4f83c6dccbcd2d6e9bf9607b1676f7ff8d63b2)
+  - Set `LayerDriver JPN` to `kbd101.dll`.
+  - Set `LayerDriver KOR` to `kbd101a.dll`.
+
+---
+
 ## [1.0.0] - 2024-08-22
 
 ### Added
@@ -20,4 +33,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ---
 
 [Unreleased](https://github.com/nobShinjo/KeyboardLayoutChanger/compare/v1.0.0...HEAD)
+[1.0.1](https://github.com/nobShinjo/KeyboardLayoutChanger/releases/tag/v1.0.1)
 [1.0.0](https://github.com/nobShinjo/KeyboardLayoutChanger/releases/tag/v1.0.0)
