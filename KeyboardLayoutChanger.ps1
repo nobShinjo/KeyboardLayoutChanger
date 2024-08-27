@@ -54,7 +54,21 @@ function New-RegistryModificationCode {
         [string]$hid,
         [PSCustomObject]$layoutValues
     )
-    [string]@"
+    # Check if the device is an ACPI device
+    if ($hid -match "ACPI") {
+        # ACPI device
+        [string]@"
+; Keyboard layout override for $($name)
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\$($hid)\Device Parameters]
+"OverrideKeyboardSubtype"=dword:$($layoutValues.KeyboardSubtypeOverride)
+"OverrideKeyboardType"=dword:$($layoutValues.KeyboardTypeOverride)
+
+
+"@
+    }
+    else {
+        # For non-ACPI devices
+        [string]@"
 ; Keyboard layout override for $($name)
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\$($hid)\Device Parameters]
 "KeyboardSubtypeOverride"=dword:$($layoutValues.KeyboardSubtypeOverride)
@@ -62,6 +76,7 @@ function New-RegistryModificationCode {
 
 
 "@
+    }
 }
 
 
@@ -69,6 +84,7 @@ function New-RegistryModificationCode {
 # Disconnect all keyboards except the one with the default layout
 Write-Output "Please, disconnect all keyboards except the one with the default layout."
 $result = Read-Host "Are you ready to proceed? (Y/N):"
+$result = $result.Trim().ToUpper()
 if ($result -ne "Y") {
     Write-Output "Operation canceled. Exiting."
     exit
@@ -101,6 +117,8 @@ Windows Registry Editor Version 5.00
 $registryCode += @"
 ; i8042prt parameters for keyboard layout override (JIS/US)
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\i8042prt\Parameters]
+"LayerDriver JPN"="kbd101.dll"
+"LayerDriver KOR"="kbd101a.dll"
 "OverrideKeyboardIdentifier"="PCAT_101KEY"
 "OverrideKeyboardSubtype"=-
 "OverrideKeyboardType"=-
@@ -111,6 +129,7 @@ $registryCode += @"
 
 # Prompt user for desired keyboard layout
 $layout = Read-Host "Enter the desired keyboard layout for existing keyboards (JIS/US):"
+$layout = $layout.Trim()
 
 # Prompt for keyboard layout for each existing keyboard
 $layoutValues = Get-KeyboardLayoutValues -layout $layout
@@ -138,10 +157,14 @@ while ($true) {
         exit 1
     }
     Write-Output "Waiting for new keyboard connection... ($elapsedSeconds seconds elapsed)"
+    3
 }
 
 # Prompt user for desired keyboard layout
 $layout = Read-Host "Enter the desired keyboard layout (JIS/US):"
+$layout = $layout.Trim()
+
+# Prompt for keyboard layout for each new keyboard
 $registryCode += "; Device parameters for new keyboard layout override ($($layout))`n"
 foreach ($keyboard in $newKeyboards) {
     $newlayoutValues = Get-KeyboardLayoutValues -layout $layout
