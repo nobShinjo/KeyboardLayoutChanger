@@ -13,13 +13,35 @@ KeyboardLayoutChanger is a PowerShell script that automatically generates regist
 ## Features
 
 - Removes common override settings for keyboard layouts.
+- Set `LayerDriver JPN` to `kbd101.dll`.
 - Changes the common keyboard layout setting to PCAT_101KEY.
 
     ```reg
     [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\i8042prt\Parameters]
+    "LayerDriver JPN"="kbd101.dll"
+    "LayerDriver KOR"="kbd101a.dll"
     "OverrideKeyboardIdentifier"="PCAT_101KEY"
     "OverrideKeyboardSubtype"=-
     "OverrideKeyboardType"=-
+    ```
+
+  - Adds override settings for JIS or US layouts to the Device Parameter of the ACPI device of connected keyboards, such as a standard PS/2 keyboard.
+  Modifies the registry under HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\ACPI\.
+
+  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\ACPI\以下を変更する。
+
+  - JIS配列
+
+    ```reg
+    "OverrideKeyboardSubtype"=dword:00000002
+    "OverrideKeyboardType"=dword:00000007
+    ```
+
+  - US配列
+
+    ```reg
+    "OverrideKeyboardSubtype"=dword:00000000
+    "OverrideKeyboardType"=dword:00000007
     ```
 
 - Adds override settings for JIS or US layouts to the HID/Device Parameters of connected keyboards.
@@ -43,35 +65,83 @@ KeyboardLayoutChanger is a PowerShell script that automatically generates regist
 
 To use the KeyboardLayoutChanger.ps1 script, follow these steps:
 
-1. Disconnect the keyboard you want to change the layout for (unplug the USB cable or dongle, or turn off the keyboard).
-2. Open a PowerShell console.
-3. Navigate to the directory where the script is located.
-4. Run the script `KeyboardLayoutChanger.ps1`  with the following command:
-5. A list of currently connected keyboards will be displayed.
-6. Connect the keyboard for which you want to set the layout. The waiting time for connection is 60 seconds. If it times out, the process will terminate abnormally.
-7. Follow the on-screen instructions to enter the desired keyboard layout.
-8. A registry file `keyboard_layout_change.reg` will be generated to change the keyboard layout of the target keyboard.
-9. Review the output of the registry file and double-click `keyboard_layout_change.reg` to apply the changes.
-10. Restart your PC.
-11. Verify that the keyboard layout has been correctly changed.
+1. Open the PowerShell console.
+1. Navigate to the directory where the script is located.
+1. Run the following command to execute the script.
 
     ```powershell
     PS> .\KeyboardLayoutChanger.ps1
+    ```
 
+1. Disconnect the keyboard you want to change the layout for (unplug the USB cable or dongle, or turn off the keyboard).
+
+1. Follow the on-screen instructions and enter `Y` when you are ready to proceed.
+
+    ```powershell
+    Are you ready to proceed? (Y/N):: Y
+    ```
+
+1. The currently connected keyboards will be displayed in a list.
+
+    ```powershell
     Getting initial list of connected keyboards...
     Currently connected keyboards:
+    - HID Keyboard Device: (HID\******\******)
+    - HID Keyboard Device: (HID\******\******)
+    - HID Keyboard Device: (HID\******\******)
+    ```
 
-    - HID Keyboard Device: (HID\******\******)
-    - HID Keyboard Device: (HID\******\******)
-    - HID Keyboard Device: (HID\******\******)
-    - Standard PS/2 Keyboard: (ACPI\******\******)
+1. Enter the desired keyboard layout for the existing keyboards.
+
+    ```powershell
+    Enter the desired keyboard layout for existing keyboards (JIS/US):: JIS
+    ```
+
+1. Connect the new keyboard for which you want to set the layout. The waiting time for connection is 60 seconds. If it times out, the process will terminate abnormally.
+
+    ```powershell
     Checking for new keyboard connections...
     New keyboard detected with the following HIDs:
     - HID Keyboard Device: (HID\{********-****-****-****-***********}_*********\*********)
     - HID Keyboard Device: (HID\{********-****-****-****-***********}_*********\*********)
-    Enter the desired keyboard layout (JIS/US):: US
+    ```
+
+1. Follow the on-screen instructions and enter the desired keyboard layout for the newly connected keyboard.
+
+    ```powershell
+     Enter the desired keyboard layout (JIS/US):: US
+    ```
+
+1. A registry file `keyboard_layout_change.reg` will be generated to change the keyboard layout for the target keyboard.
+
+    ```powershell
     Registry modification code has been saved to [CurrentPath]\keyboard_layout_change.reg
     ```
+
+1. Verify the output of the registry file and double-click `keyboard_layout_change.reg` to apply the changes.
+1. Restart your PC.
+1. Confirm that the keyboard layout has been correctly changed.
+
+### Example Output
+
+```powershell
+PS> .\KeyboardLayoutChanger.ps1
+Please, disconnect all keyboards except the one with the default layout.
+Are you ready to proceed? (Y/N):: Y
+Getting initial list of connected keyboards...
+Currently connected keyboards:
+- HID Keyboard Device: (HID\******\******)
+- HID Keyboard Device: (HID\******\******)
+- HID Keyboard Device: (HID\******\******)
+- Standard PS/2 Keyboard: (ACPI\******\******)
+Enter the desired keyboard layout for existing keyboards (JIS/US):: JIS
+Checking for new keyboard connections...
+New keyboard detected with the following HIDs:
+- HID Keyboard Device: (HID\{********-****-****-****-***********}_*********\*********)
+- HID Keyboard Device: (HID\{********-****-****-****-***********}_*********\*********)
+Enter the desired keyboard layout (JIS/US):: US
+Registry modification code has been saved to [CurrentPath]\keyboard_layout_change.reg
+```
 
 ## Requirements
 
